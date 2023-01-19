@@ -1,0 +1,34 @@
+[package]
+name = "impact-rpc"
+version = "3.0.0-dev"
+authors = ["Parity Technologies <admin@parity.io>"]
+description = "Substrate node rpc methods."
+edition = "2021"
+license = "Apache-2.0"
+homepage = "https://substrate.io"
+repository = "https://github.com/paritytech/substrate/"
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+jsonrpsee = { version = "0.16.2", features = ["server"] }
+impact-primitives = { version = "2.0.0", path = "../primitives" }
+pallet-transaction-payment-rpc = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+mmr-rpc = { version = "4.0.0-dev",git = "https://github.com/paritytech/substrate.git" }
+sc-chain-spec = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sc-client-api = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sc-finality-grandpa = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sc-finality-grandpa-rpc = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sc-rpc = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sc-rpc-api = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sc-rpc-spec-v2 = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git"}
+sc-sync-state-rpc = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sc-transaction-pool-api = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-api = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-block-builder = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-blockchain = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-consensus = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sp-runtime = { version = "7.0.0", git = "https://github.com/paritytech/substrate.git" }
+substrate-frame-rpc-system = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+substrate-state-trie-migration-rpc = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }

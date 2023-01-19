@@ -1,0 +1,23 @@
+[package]
+name = 'impact-consensus-pow'
+version = "3.0.0-dev"
+edition = '2021'
+authors = ['Gabriel Mendoza']
+repository = 'https://github.com/GlobalBoost/impact'
+description = 'Yescrypt-based Proof of Work algorithms for Impact Protocol'
+license = "GPL-3.0-or-later"
+
+[dependencies]
+scale-info = "2.3.0"
+parity-scale-codec = '3.0.0'
+rand = { version = "0.8", features = ["small_rng"] }
+rust-yescrypt = {git = 'https://github.com/mendozg/rust-yescrypt.git', rev = "0e74bbc"}
+log = "0.4.17"
+# Substrate packages
+sc-consensus-pow = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+sp-application-crypto = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+sp-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+sp-consensus-pow = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+impact-primitives = { version = "2.0.0", default-features = false, path = "../../primitives" }

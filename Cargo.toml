@@ -1,0 +1,17 @@
+[workspace]
+members = [
+	"bench",
+	"cli",
+	"consensus/pow",
+	"executor",
+	"primitives",
+	"pallets/rewards",
+	"pallets/difficulty",
+	"rpc",
+	"runtime",
+	"testing",
+	"utils/chain-spec-builder",
+	"utils/subkey",
+]
+[profile.release]
+panic = "unwind"
