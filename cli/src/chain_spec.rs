@@ -63,9 +63,9 @@ pub struct Extensions {
 
 /// Specialized `ChainSpec`.
 pub type ChainSpec = sc_service::GenericChainSpec<GenesisConfig, Extensions>;
-/// Flaming Fir testnet generator
-pub fn flaming_fir_config() -> Result<ChainSpec, String> {
-	ChainSpec::from_json_bytes(&include_bytes!("../res/flaming-fir.json")[..])
+/// Impact Protocol testnet generator
+pub fn impact_testnet_config() -> Result<ChainSpec, String> {
+	ChainSpec::from_json_bytes(&include_bytes!("../res/impact-testnet.json")[..])
 }
 
 fn session_keys(
