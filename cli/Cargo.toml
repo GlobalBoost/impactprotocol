@@ -54,7 +54,6 @@ sp-api = { version = "4.0.0-dev", default-features = false, git = "https://githu
 sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sp-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-authorship = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sp-inherents = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sp-keyring = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sp-keystore = { version = "0.13.0", default-features = false, git = "https://github.com/paritytech/substrate.git"}
@@ -68,13 +67,11 @@ sc-client-api = { version = "4.0.0-dev", default-features = false, git = "https:
 sc-chain-spec = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sc-consensus = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sc-consensus-pow = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git"}
-
 sc-transaction-pool = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sc-transaction-pool-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sc-network = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sc-network-common = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-consensus-slots = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-consensus-uncles = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
+
 grandpa = { version = "0.10.0-dev", package = "sc-finality-grandpa", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sc-rpc = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
 sc-basic-authorship = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
