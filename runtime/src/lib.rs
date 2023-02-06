@@ -542,16 +542,16 @@ impl_opaque_keys! {
 }
 
 parameter_types! {
-	pub const Period2: u32 = 2 * MINUTES;
-	pub const Offset: u32 = 0;
+	pub const SessionPeriod: u32 = HOURS;
+	pub const SessionOffset: u32 = 0;
 }
 
 impl pallet_session::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type ValidatorId = <Self as frame_system::Config>::AccountId;
 	type ValidatorIdOf = pallet_staking::StashOf<Self>;
-	type ShouldEndSession = pallet_session::PeriodicSessions<Period2, Offset>;
-	type NextSessionRotation = pallet_session::PeriodicSessions<Period2, Offset>;
+	type ShouldEndSession = pallet_session::PeriodicSessions<SessionPeriod, SessionOffset>;
+	type NextSessionRotation = pallet_session::PeriodicSessions<SessionPeriod, SessionOffset>;
 	type SessionManager = pallet_session::historical::NoteHistoricalRoot<Self, Staking>;
 	type SessionHandler = <SessionKeys as OpaqueKeys>::KeyTypeIdProviders;
 	type Keys = SessionKeys;
