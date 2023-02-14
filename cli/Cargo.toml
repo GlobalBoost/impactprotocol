@@ -2,13 +2,13 @@
 name = "impact-cli"
 version = "3.0.0-dev"
 authors = ["Parity Technologies <admin@parity.io>"]
-description = "Generic Substrate node implementation in Rust."
+description = "Impact protocol node implementation in Rust."
 build = "build.rs"
 edition = "2021"
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 default-run = "impact"
-homepage = "https://substrate.io"
-repository = "https://github.com/paritytech/substrate/"
+homepage = "https://impactprotocol.network"
+repository = "https://github.com/GlobalBoost/substrate/"
 
 [package.metadata.wasm-pack.profile.release]
 # `wasm-opt` has some problems on linux, see
@@ -19,10 +19,10 @@ wasm-opt = false
 targets = ["x86_64-unknown-linux-gnu"]
 
 [badges]
-travis-ci = { repository = "paritytech/substrate" }
+travis-ci = { repository = "GlobalBoost/substrate" }
 maintenance = { status = "actively-developed" }
-is-it-maintained-issue-resolution = { repository = "paritytech/substrate" }
-is-it-maintained-open-issues = { repository = "paritytech/substrate" }
+is-it-maintained-issue-resolution = { repository = "GlobalBoost/substrate" }
+is-it-maintained-open-issues = { repository = "GlobalBoost/substrate" }
 
 [[bin]]
 name = "impact"
@@ -48,46 +48,46 @@ backtrace = "0.3.67"
 
 
 # primitives
-sp-authority-discovery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-grandpa-primitives = { version = "4.0.0-dev", package = "sp-finality-grandpa",default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-inherents = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-keyring = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-keystore = { version = "0.13.0", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-consensus = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-consensus-pow = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git"}
-sp-transaction-pool = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-transaction-storage-proof = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
+sp-authority-discovery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+grandpa-primitives = { version = "4.0.0-dev", package = "sp-finality-grandpa",default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-inherents = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-keyring = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-keystore = { version = "0.13.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-consensus = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-consensus-pow = { version = "0.10.0-dev", git = "https://github.com/GlobalBoost/substrate.git"}
+sp-transaction-pool = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-transaction-storage-proof = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
 
 # client dependencies
-sc-client-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-chain-spec = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-consensus = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-consensus-pow = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git"}
-sc-transaction-pool = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-transaction-pool-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-network = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-network-common = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
+sc-client-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-chain-spec = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-consensus = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-consensus-pow = { version = "0.10.0-dev", git = "https://github.com/GlobalBoost/substrate.git"}
+sc-transaction-pool = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-transaction-pool-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-network = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-network-common = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
 
-grandpa = { version = "0.10.0-dev", package = "sc-finality-grandpa", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-rpc = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-basic-authorship = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-service = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-telemetry = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-executor = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-authority-discovery = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-sync-state-rpc = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-sysinfo = { version = "6.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-keystore = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
+grandpa = { version = "0.10.0-dev", package = "sc-finality-grandpa", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-rpc = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-basic-authorship = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-service = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-telemetry = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-executor = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-authority-discovery = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-sync-state-rpc = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-sysinfo = { version = "6.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-keystore = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
 # frame dependencies
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-frame-system-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-pallet-transaction-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-pallet-asset-tx-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-pallet-im-online = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+frame-system-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+pallet-transaction-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+pallet-asset-tx-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+pallet-im-online = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
 
 # impact-specific dependencies
 impact-runtime = { version = "3.0.0-dev", path = "../runtime" }
@@ -98,26 +98,26 @@ impact-consensus-pow = { version = "3.0.0-dev", path = '../consensus/pow' }
 
 
 # CLI-specific dependencies
-sc-cli = { version = "0.10.0-dev", optional = true, default-features = false, git = "https://github.com/paritytech/substrate.git"}
-frame-benchmarking-cli = { version = "4.0.0-dev", optional = true, default-features = false, git = "https://github.com/paritytech/substrate.git"}
+sc-cli = { version = "0.10.0-dev", optional = true, default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+frame-benchmarking-cli = { version = "4.0.0-dev", optional = true, default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
 impact-inspect = { version = "0.9.0-dev", optional = true, path = "../inspect" }
-try-runtime-cli = { version = "0.10.0-dev", optional = true, default-features = false, git = "https://github.com/paritytech/substrate.git"}
+try-runtime-cli = { version = "0.10.0-dev", optional = true, default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
 serde_json = "1.0.85"
 
 [target.'cfg(any(target_arch="x86_64", target_arch="aarch64"))'.dependencies]
 impact-executor = { version = "3.0.0-dev", path = "../executor"}
-sc-cli = { version = "0.10.0-dev", optional = true, default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sc-service = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git"}
-sp-trie = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git"}
+sc-cli = { version = "0.10.0-dev", optional = true, default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sc-service = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+sp-trie = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
 
 [dev-dependencies]
-sc-keystore = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
-sc-client-db = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git" }
-sc-consensus = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git" }
-sc-service-test = { version = "2.0.0", git = "https://github.com/paritytech/substrate.git" }
-sc-block-builder = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git" }
-sp-tracing = { version = "6.0.0", git = "https://github.com/paritytech/substrate.git" }
-sp-blockchain = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+sc-keystore = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
+sc-client-db = { version = "0.10.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
+sc-consensus = { version = "0.10.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
+sc-service-test = { version = "2.0.0", git = "https://github.com/GlobalBoost/substrate.git" }
+sc-block-builder = { version = "0.10.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
+sp-tracing = { version = "6.0.0", git = "https://github.com/GlobalBoost/substrate.git" }
+sp-blockchain = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
 futures = "0.3.21"
 tempfile = "3.1.0"
 assert_cmd = "2.0.2"
@@ -130,19 +130,19 @@ soketto = "0.7.1"
 criterion = { version = "0.3.5", features = ["async_tokio"] }
 tokio = { version = "1.17.0", features = ["macros", "time", "parking_lot"] }
 wait-timeout = "0.2"
-substrate-rpc-client = { git = "https://github.com/paritytech/substrate.git" }
-pallet-timestamp = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+substrate-rpc-client = { git = "https://github.com/GlobalBoost/substrate.git" }
+pallet-timestamp = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
 
 [build-dependencies]
 clap = { version = "4.0.9", optional = true }
 clap_complete = { version = "4.0.2", optional = true }
 impact-inspect = { version = "0.9.0-dev", optional = true, path = "../inspect" }
-frame-benchmarking-cli = { version = "4.0.0-dev", optional = true, git = "https://github.com/paritytech/substrate.git" }
-substrate-build-script-utils = { version = "3.0.0", optional = true, git = "https://github.com/paritytech/substrate.git" }
-substrate-frame-cli = { version = "4.0.0-dev", optional = true, git = "https://github.com/paritytech/substrate.git" }
-try-runtime-cli = { version = "0.10.0-dev", optional = true, git = "https://github.com/paritytech/substrate.git" }
-sc-cli = { version = "0.10.0-dev", git = "https://github.com/paritytech/substrate.git", optional = true }
-pallet-balances = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git" }
+frame-benchmarking-cli = { version = "4.0.0-dev", optional = true, git = "https://github.com/GlobalBoost/substrate.git" }
+substrate-build-script-utils = { version = "3.0.0", optional = true, git = "https://github.com/GlobalBoost/substrate.git" }
+substrate-frame-cli = { version = "4.0.0-dev", optional = true, git = "https://github.com/GlobalBoost/substrate.git" }
+try-runtime-cli = { version = "0.10.0-dev", optional = true, git = "https://github.com/GlobalBoost/substrate.git" }
+sc-cli = { version = "0.10.0-dev", git = "https://github.com/GlobalBoost/substrate.git", optional = true }
+pallet-balances = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
 
 [features]
 default = ["cli"]

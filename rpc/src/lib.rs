@@ -132,7 +132,7 @@ where
 
 	io.merge(System::new(client.clone(), pool, deny_unsafe).into_rpc())?;
 	// Making synchronous calls in light client freezes the browser currently,
-	// more context: https://github.com/paritytech/substrate/pull/3480
+	// more context: https://github.com/GlobalBoost/substrate/pull/3480
 	// These RPCs should use an asynchronous caller instead.
 	io.merge(Mmr::new(client.clone()).into_rpc())?;
 	io.merge(TransactionPayment::new(client.clone()).into_rpc())?;

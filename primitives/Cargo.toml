@@ -2,11 +2,11 @@
 name = "impact-primitives"
 version = "2.0.0"
 authors = ["Parity Technologies <admin@parity.io>"]
-description = "Substrate node low-level primitives."
+description = "Impact node low-level primitives."
 edition = "2021"
 license = "Apache-2.0"
-homepage = "https://substrate.io"
-repository = "https://github.com/paritytech/substrate/"
+homepage = "https://impactprotocol.network"
+repository = "https://github.com/GlobalBoost/substrate/"
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
@@ -16,11 +16,11 @@ codec = { package = "parity-scale-codec", version = "3.0.0", default-features = 
 	"derive",
 ] }
 scale-info = { version = "2.1.1", default-features = false, features = ["derive"] }
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
-sp-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git" }
-sp-application-crypto = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git" }
-sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git" }
-sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git" }
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
+sp-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
+sp-application-crypto = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
+sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
+sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
 
 [features]
 default = ["std"]

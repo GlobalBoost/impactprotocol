@@ -56,7 +56,7 @@ impl SubstrateCli for Cli {
 	}
 
 	fn support_url() -> String {
-		"https://github.com/paritytech/substrate/issues/new".into()
+		"https://github.com/GlobalBoost/substrate/issues/new".into()
 	}
 
 	fn copyright_start_year() -> i32 {
