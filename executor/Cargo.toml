@@ -33,7 +33,6 @@ frame-system = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/su
 impact-testing = { version = "3.0.0-dev", path = "../testing" }
 pallet-balances = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
 pallet-contracts = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-im-online = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
 pallet-sudo = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git"}
 pallet-timestamp = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }
 pallet-treasury = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git" }

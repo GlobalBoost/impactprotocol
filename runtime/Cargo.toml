@@ -68,7 +68,6 @@ pallet-election-provider-support-benchmarking = { version = "4.0.0-dev", default
 pallet-elections-phragmen = { version = "5.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
 pallet-fast-unstake = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
 pallet-grandpa = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-im-online = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
 pallet-indices = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
 pallet-identity = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
 pallet-lottery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
@@ -143,7 +142,6 @@ std = [
 	"pallet-fast-unstake/std",
 	"frame-executive/std",
 	"pallet-grandpa/std",
-	"pallet-im-online/std",
 	"pallet-indices/std",
 	"sp-inherents/std",
 	"pallet-lottery/std",
@@ -223,7 +221,6 @@ runtime-benchmarks = [
 	"pallet-fast-unstake/runtime-benchmarks",
 	"pallet-grandpa/runtime-benchmarks",
 	"pallet-identity/runtime-benchmarks",
-	"pallet-im-online/runtime-benchmarks",
 	"pallet-indices/runtime-benchmarks",
 	"pallet-lottery/runtime-benchmarks",
 	"pallet-membership/runtime-benchmarks",
@@ -273,7 +270,6 @@ try-runtime = [
 	"pallet-elections-phragmen/try-runtime",
 	"pallet-fast-unstake/try-runtime",
 	"pallet-grandpa/try-runtime",
-	"pallet-im-online/try-runtime",
 	"pallet-indices/try-runtime",
 	"pallet-identity/try-runtime",
 	"pallet-lottery/try-runtime",

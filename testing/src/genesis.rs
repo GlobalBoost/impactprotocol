@@ -77,7 +77,6 @@ pub fn config_endowed(code: Option<&[u8]>, extra_endowed: Vec<AccountId>) -> Gen
 			..Default::default()
 		},
 		grandpa: GrandpaConfig { authorities: vec![] },
-		im_online: Default::default(),
 		authority_discovery: Default::default(),
 		democracy: Default::default(),
 		council: Default::default(),

@@ -87,7 +87,6 @@ frame-system = { version = "4.0.0-dev", default-features = false, git = "https:/
 frame-system-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
 pallet-transaction-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
 pallet-asset-tx-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-im-online = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
 
 # impact-specific dependencies
 impact-runtime = { version = "3.0.0-dev", path = "../runtime" }

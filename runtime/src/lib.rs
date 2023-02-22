@@ -54,7 +54,6 @@ use pallet_election_provider_multi_phase::SolutionAccuracyOf;
 use pallet_grandpa::{
 	fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
 };
-use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
 use pallet_nfts::PalletFeatures;
 use pallet_session::historical::{self as pallet_session_historical};
 pub use pallet_transaction_payment::{CurrencyAdapter, Multiplier, TargetedFeeAdjustment};
@@ -463,7 +462,7 @@ parameter_types! {
 
 impl pallet_authorship::Config for Runtime {
 	type FindAuthor = ();
-	type EventHandler = (Staking, ImOnline);
+	type EventHandler = Staking;
 }
 
 parameter_types! {
@@ -536,7 +535,6 @@ impl rewards::Config for Runtime {
 impl_opaque_keys! {
 	pub struct SessionKeys {
 		pub grandpa: Grandpa,
-		pub im_online: ImOnline,
 		pub authority_discovery: AuthorityDiscovery,
 	}
 }
@@ -1248,13 +1246,8 @@ impl pallet_sudo::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ImOnlineUnsignedPriority: TransactionPriority = TransactionPriority::max_value();
-	/// We prioritize im-online heartbeats over election solution submission.
 	pub const StakingUnsignedPriority: TransactionPriority = TransactionPriority::max_value() / 2;
 	pub const MaxAuthorities: u32 = 100;
-	pub const MaxKeys: u32 = 10_000;
-	pub const MaxPeerInHeartbeats: u32 = 10_000;
-	pub const MaxPeerDataEncodingSize: u32 = 1_000;
 }
 
 impl<LocalCall> frame_system::offchain::CreateSignedTransaction<LocalCall> for Runtime
@@ -1310,19 +1303,6 @@ where
 {
 	type Extrinsic = UncheckedExtrinsic;
 	type OverarchingCall = RuntimeCall;
-}
-
-impl pallet_im_online::Config for Runtime {
-	type AuthorityId = ImOnlineId;
-	type RuntimeEvent = RuntimeEvent;
-	type NextSessionRotation = ();
-	type ValidatorSet = Historical;
-	type ReportUnresponsiveness = Offences;
-	type UnsignedPriority = ImOnlineUnsignedPriority;
-	type WeightInfo = pallet_im_online::weights::SubstrateWeight<Runtime>;
-	type MaxKeys = MaxKeys;
-	type MaxPeerInHeartbeats = MaxPeerInHeartbeats;
-	type MaxPeerDataEncodingSize = MaxPeerDataEncodingSize;
 }
 
 impl pallet_offences::Config for Runtime {
@@ -1692,7 +1672,7 @@ construct_runtime!(
 		Utility: pallet_utility,
 		Timestamp: pallet_timestamp,
 		// Authorship must be before session in order to note author in the correct session and era
-		// for im-online and staking.
+		// for staking.
 		Authorship: pallet_authorship,
 		Indices: pallet_indices,
 		Balances: pallet_balances,
@@ -1712,7 +1692,6 @@ construct_runtime!(
 		Treasury: pallet_treasury,
 		Contracts: pallet_contracts,
 		Sudo: pallet_sudo,
-		ImOnline: pallet_im_online,
 		AuthorityDiscovery: pallet_authority_discovery,
 		Offences: pallet_offences,
 		Historical: pallet_session_historical::{Pallet},
@@ -1834,7 +1813,6 @@ mod benches {
 		[pallet_fast_unstake, FastUnstake]
 		[pallet_grandpa, Grandpa]
 		[pallet_identity, Identity]
-		[pallet_im_online, ImOnline]
 		[pallet_indices, Indices]
 		[pallet_lottery, Lottery]
 		[pallet_membership, TechnicalMembership]
