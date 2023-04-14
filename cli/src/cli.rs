@@ -17,6 +17,9 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 /// An overarching CLI command definition.
+
+
+use super::service::EthConfiguration;
 #[derive(Debug, clap::Parser)]
 pub struct Cli {
 	/// Possible subcommand with parameters.
@@ -40,6 +43,9 @@ pub struct Cli {
 	/// Block Author. An Optional parameter used for defining the block author who will get the rewards
 	#[arg(long)]
 	pub author: Option<String>,
+
+	#[command(flatten)]
+	pub eth: EthConfiguration,
 }
 #[allow(missing_docs)]
 #[derive(Debug, clap::Parser)]
@@ -98,6 +104,7 @@ pub enum Subcommand {
 
 	/// Sub-commands concerned with benchmarking.
 	/// The pallet benchmarking moved to the `pallet` sub-command.
+	#[cfg(feature = "runtime-benchmarks")]
 	#[command(subcommand)]
 	Benchmark(frame_benchmarking_cli::BenchmarkCmd),
 
@@ -147,9 +154,13 @@ pub enum Subcommand {
 	ChainInfo(sc_cli::ChainInfoCmd),
 
 	#[allow(missing_docs)]
-	#[clap(name = "import-mining-key")]
+	#[command(name = "import-mining-key")]
 	ImportMiningKey(ImportMiningKeyCommand),
+
 	#[allow(missing_docs)]
-	#[clap(name = "generate-mining-key")]
+	#[command(name = "generate-mining-key")]
 	GenerateMiningKey(GenerateMiningKeyCommand),
+
+	/// Db meta columns information.
+	FrontierDb(fc_cli::FrontierDbCmd),
 }

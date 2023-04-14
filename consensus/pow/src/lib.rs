@@ -140,10 +140,9 @@ where
 	type Difficulty = U256;
 
 	fn difficulty(&self, parent: B::Hash) -> Result<Self::Difficulty, Error<B>> {
-		let parent_id = BlockId::<B>::hash(parent);
 		self.client
 			.runtime_api()
-			.difficulty(&parent_id)
+			.difficulty(parent)
 			.map_err(|err| {
 				sc_consensus_pow::Error::Environment(format!(
 					"Fetching difficulty from runtime failed: {:?}",

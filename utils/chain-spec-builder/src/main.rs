@@ -118,6 +118,7 @@ fn genesis_constructor(
 		nominator_accounts.to_vec(),
 		sudo_account.clone(),
 		Some(endowed_accounts.to_vec()),
+		42,
 	)
 }
 

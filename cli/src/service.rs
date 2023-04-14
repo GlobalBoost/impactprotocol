@@ -16,26 +16,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-#![warn(unused_extern_crates)]
-
 //! Service implementation. Specialized wrapper over substrate service.
 use async_trait::async_trait;
 use codec::Encode;
-use frame_system_rpc_runtime_api::AccountNonceApi;
 use futures::prelude::*;
-use impact_runtime::RuntimeApi;
-use impact_executor::ExecutorDispatch;
 use impact_primitives::Block;
-use sc_client_api::BlockBackend;
-
-use sc_executor::NativeElseWasmExecutor;
+use sc_client_api::{BlockBackend, StateBackendFor};
+use sc_consensus::BasicQueue;
+use sc_executor::{NativeElseWasmExecutor, NativeExecutionDispatch};
 use grandpa::{SharedVoterState, GrandpaBlockImport};
-use sc_network::NetworkService;
-use sc_network_common::{protocol::event::Event, service::NetworkEventStream};
-use sc_service::{config::Configuration, error::Error as ServiceError, RpcHandlers, TaskManager};
+use sc_network::{event::Event, NetworkEventStream};
+use sc_network_common::sync::warp::WarpSyncParams;
+use sc_service::{config::Configuration, error::Error as ServiceError, PartialComponents, TaskManager};
 use impact_consensus_pow::*;
 use sc_telemetry::{Telemetry, TelemetryWorker};
-use sp_api::ProvideRuntimeApi;
+use sp_api::ConstructRuntimeApi;
 use log::*;
 
 use sp_core::{
@@ -44,11 +39,29 @@ use sp_core::{
 };
 
 use sp_keystore::{SyncCryptoStore, SyncCryptoStorePtr};
-use sp_runtime::{generic, traits::Block as BlockT, SaturatedConversion};
+use sp_runtime::traits::{Block as BlockT, BlakeTwo256};
 use std::{sync::Arc, time::Duration};
 use std::thread;
 use std::path::PathBuf;
 use std::str::FromStr;
+use sp_trie::PrefixedMemoryDB;
+
+// Runtime
+use impact_runtime::TransactionConverter;
+
+use crate::{
+	client::{FullBackend, FullClient, RuntimeApiCollection},
+	eth::{
+		new_frontier_partial, spawn_frontier_tasks, FrontierBackend, FrontierBlockImport,
+		FrontierPartialComponents,
+	},
+};
+
+pub use crate::{
+	client::{Client, TemplateRuntimeExecutor},
+	eth::{db_config_dir, EthConfiguration},
+};
+
 
 #[allow(missing_docs)]
 pub fn decode_author(
@@ -98,92 +111,33 @@ pub fn decode_author(
 	}
 }
 
+// Our native executor instance.
+pub struct ExecutorDispatch;
 
+impl sc_executor::NativeExecutionDispatch for ExecutorDispatch {
+	/// Only enable the benchmarking host functions when we actually want to benchmark.
+	#[cfg(feature = "runtime-benchmarks")]
+	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
+	/// Otherwise we only use the default Substrate host functions.
+	#[cfg(not(feature = "runtime-benchmarks"))]
+	type ExtendHostFunctions = ();
 
-/// The full client type definition.
-pub type FullClient =
-	sc_service::TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<ExecutorDispatch>>;
-type FullBackend = sc_service::TFullBackend<Block>;
+	fn dispatch(method: &str, data: &[u8]) -> Option<Vec<u8>> {
+		impact_runtime::api::dispatch(method, data)
+	}
+
+	fn native_version() -> sc_executor::NativeVersion {
+		impact_runtime::native_version()
+	}
+}
+
 type FullSelectChain = sc_consensus::LongestChain<FullBackend, Block>;
-type FullGrandpaBlockImport =
-	GrandpaBlockImport<FullBackend, Block, FullClient, FullSelectChain>;
+
+type FullGrandpaBlockImport<Client> =
+	GrandpaBlockImport<FullBackend, Block, Client, FullSelectChain>;
 
 /// The transaction pool type defintion.
-pub type TransactionPool = sc_transaction_pool::FullPool<Block, FullClient>;
-
-/// Fetch the nonce of the given `account` from the chain state.
-///
-/// Note: Should only be used for tests.
-pub fn fetch_nonce(client: &FullClient, account: sp_core::sr25519::Pair) -> u32 {
-	let best_hash = client.chain_info().best_hash;
-	client
-		.runtime_api()
-		.account_nonce(&generic::BlockId::Hash(best_hash), account.public().into())
-		.expect("Fetching account nonce works; qed")
-}
-
-/// Create a transaction using the given `call`.
-///
-/// The transaction will be signed by `sender`. If `nonce` is `None` it will be fetched from the
-/// state of the best block.
-///
-/// Note: Should only be used for tests.
-pub fn create_extrinsic(
-	client: &FullClient,
-	sender: sp_core::sr25519::Pair,
-	function: impl Into<impact_runtime::RuntimeCall>,
-	nonce: Option<u32>,
-) -> impact_runtime::UncheckedExtrinsic {
-	let function = function.into();
-	let genesis_hash = client.block_hash(0).ok().flatten().expect("Genesis block exists; qed");
-	let best_hash = client.chain_info().best_hash;
-	let best_block = client.chain_info().best_number;
-	let nonce = nonce.unwrap_or_else(|| fetch_nonce(client, sender.clone()));
-
-	let period = impact_runtime::BlockHashCount::get()
-		.checked_next_power_of_two()
-		.map(|c| c / 2)
-		.unwrap_or(2) as u64;
-	let tip = 0;
-	let extra: impact_runtime::SignedExtra = (
-		frame_system::CheckNonZeroSender::<impact_runtime::Runtime>::new(),
-		frame_system::CheckSpecVersion::<impact_runtime::Runtime>::new(),
-		frame_system::CheckTxVersion::<impact_runtime::Runtime>::new(),
-		frame_system::CheckGenesis::<impact_runtime::Runtime>::new(),
-		frame_system::CheckEra::<impact_runtime::Runtime>::from(generic::Era::mortal(
-			period,
-			best_block.saturated_into(),
-		)),
-		frame_system::CheckNonce::<impact_runtime::Runtime>::from(nonce),
-		frame_system::CheckWeight::<impact_runtime::Runtime>::new(),
-		pallet_asset_tx_payment::ChargeAssetTxPayment::<impact_runtime::Runtime>::from(
-			tip, None
-		),
-	);
-
-	let raw_payload = impact_runtime::SignedPayload::from_raw(
-		function.clone(),
-		extra.clone(),
-		(
-			(),
-			impact_runtime::VERSION.spec_version,
-			impact_runtime::VERSION.transaction_version,
-			genesis_hash,
-			best_hash,
-			(),
-			(),
-			(),
-		),
-	);
-	let signature = raw_payload.using_encoded(|e| sender.sign(e));
-
-	impact_runtime::UncheckedExtrinsic::new_signed(
-		function,
-		sp_runtime::AccountId32::from(sender.public()).into(),
-		impact_runtime::Signature::Sr25519(signature),
-		extra,
-	)
-}
+pub type FullPool<Client> = sc_transaction_pool::FullPool<Block, Client>;
 
 /// Generate the inherent data providers expected by the runtime
 pub struct CreateInherentDataProviders;
@@ -202,15 +156,16 @@ impl sp_inherents::CreateInherentDataProviders<Block, ()> for CreateInherentData
 }
 
 /// Creates a new partial node.
-pub fn new_partial(
+pub fn new_partial<RuntimeApi, Executor>(
 	config: &Configuration,
+	_eth_config: &EthConfiguration,
 ) -> Result<
 	sc_service::PartialComponents<
-		FullClient,
+		FullClient<RuntimeApi, Executor>,
 		FullBackend,
 		FullSelectChain,
-		sc_consensus::DefaultImportQueue<Block, FullClient>,
-		sc_transaction_pool::FullPool<Block, FullClient>,
+		sc_consensus::DefaultImportQueue<Block, FullClient<RuntimeApi, Executor>>,
+		FullPool<FullClient<RuntimeApi, Executor>>,
 		(
 			impl Fn(
 				impact_rpc::DenyUnsafe,
@@ -219,20 +174,27 @@ pub fn new_partial(
 			(
 				sc_consensus_pow::PowBlockImport<
 				Block,
-				FullGrandpaBlockImport,
-				FullClient,
+				FullGrandpaBlockImport<FullClient<RuntimeApi, Executor>>,
+				FullClient<RuntimeApi, Executor>,
 				FullSelectChain,
-				impact_consensus_pow::YescryptAlgorithm<FullClient>,
+				impact_consensus_pow::YescryptAlgorithm<FullClient<RuntimeApi, Executor>>,
 				CreateInherentDataProviders,
 				>,
-				grandpa::LinkHalf<Block, FullClient, FullSelectChain>,
+				grandpa::LinkHalf<Block, FullClient<RuntimeApi, Executor>, FullSelectChain>,
 			),
 			SharedVoterState,
 			Option<Telemetry>,
+			Arc<FrontierBackend>,
 		),
 	>,
 	ServiceError,
-> {
+> 
+where
+	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi, Executor>>,
+	RuntimeApi: Send + Sync + 'static,
+	RuntimeApi::RuntimeApi: RuntimeApiCollection<StateBackend = StateBackendFor<FullBackend, Block>>,
+	Executor: NativeExecutionDispatch + 'static,
+{
 	let telemetry = config
 		.telemetry_endpoints
 		.clone()
@@ -244,7 +206,7 @@ pub fn new_partial(
 		})
 		.transpose()?;
 
-	let executor = NativeElseWasmExecutor::<ExecutorDispatch>::new(
+	let executor = NativeElseWasmExecutor::<Executor>::new(
 		config.wasm_method,
 		config.default_heap_pages,
 		config.max_runtime_instances,
@@ -257,14 +219,55 @@ pub fn new_partial(
 			telemetry.as_ref().map(|(_, telemetry)| telemetry.handle()),
 			executor,
 		)?;
+	
 	let client = Arc::new(client);
 
 	let telemetry = telemetry.map(|(worker, telemetry)| {
-		task_manager.spawn_handle().spawn("telemetry", None, worker.run());
+		task_manager
+			.spawn_handle()
+			.spawn("telemetry", None, worker.run());
 		telemetry
 	});
 
 	let select_chain = sc_consensus::LongestChain::new(backend.clone());
+
+	let (grandpa_block_import, grandpa_link) = grandpa::block_import(
+		client.clone(),
+		&client.clone(),
+		select_chain.clone(),
+		telemetry.as_ref().map(|x| x.handle()),
+	)?;
+
+	let frontier_backend = Arc::new(FrontierBackend::open(
+		client.clone(),
+		&config.database,
+		&db_config_dir(config),
+	)?);
+
+	let frontier_block_import = FrontierBlockImport::new(
+		grandpa_block_import.clone(),
+		client.clone(),
+		frontier_backend.clone(),
+	);
+
+	let algorithm = impact_consensus_pow::YescryptAlgorithm::new(client.clone());
+
+	let pow_block_import = sc_consensus_pow::PowBlockImport::new(
+		grandpa_block_import.clone(),
+		client.clone(),
+		algorithm.clone(),
+		0, // check inherents starting at block 0
+		select_chain.clone(),
+		CreateInherentDataProviders,
+	);
+
+	let import_queue = sc_consensus_pow::import_queue(
+		Box::new(frontier_block_import.clone()),
+		Some(Box::new(grandpa_block_import)),
+		algorithm.clone(),
+		&task_manager.spawn_essential_handle(),
+		config.prometheus_registry(),	
+	)?;
 
 	let transaction_pool = sc_transaction_pool::BasicPool::new_full(
 		config.transaction_pool.clone(),
@@ -273,32 +276,6 @@ pub fn new_partial(
 		task_manager.spawn_essential_handle(),
 		client.clone(),
 	);
-
-	let algorithm = impact_consensus_pow::YescryptAlgorithm::new(client.clone());
-
-	let (grandpa_block_import, grandpa_link) = grandpa::block_import(
-		client.clone(),
-		&(client.clone() as Arc<_>),
-		select_chain.clone(),
-		telemetry.as_ref().map(|x| x.handle()),
-	)?;
-	
-	let pow_block_import = sc_consensus_pow::PowBlockImport::new(
-		grandpa_block_import,
-		client.clone(),
-		algorithm.clone(),
-		0, // check inherents starting at block 0
-		select_chain.clone(),
-		CreateInherentDataProviders,
-	);	
-
-	let import_queue = sc_consensus_pow::import_queue(
-		Box::new(pow_block_import.clone()),
-		None,
-		algorithm.clone(),
-		&task_manager.spawn_essential_handle(),
-		config.prometheus_registry(),	
-	)?;
 
 	let import_setup = (pow_block_import, grandpa_link);
 
@@ -351,40 +328,26 @@ pub fn new_partial(
 		select_chain,
 		import_queue,
 		transaction_pool,
-		other: (rpc_extensions_builder, import_setup, rpc_setup, telemetry),
+		other: (rpc_extensions_builder, import_setup, rpc_setup, telemetry, frontier_backend),
 	})
 }
 
-/// Result of [`new_full_base`].
-pub struct NewFullBase {
-	/// The task manager of the node.
-	pub task_manager: TaskManager,
-	/// The client instance of the node.
-	pub client: Arc<FullClient>,
-	/// The networking service of the node.
-	pub network: Arc<NetworkService<Block, <Block as BlockT>::Hash>>,
-	/// The transaction pool of the node.
-	pub transaction_pool: Arc<TransactionPool>,
-	/// The rpc handlers of the node.
-	pub rpc_handlers: RpcHandlers,
-}
 
 /// Creates a full service from the configuration.
-pub fn new_full_base(
+pub fn new_full_base<RuntimeApi, Executor>(
 	mut config: Configuration,
+	eth_config: EthConfiguration,
 	author: Option<&str>,
-	disable_hardware_benchmarks: bool,
-) -> Result<NewFullBase, ServiceError> {
-	let hwbench = if !disable_hardware_benchmarks {
-		config.database.path().map(|database_path| {
-			let _ = std::fs::create_dir_all(&database_path);
-			sc_sysinfo::gather_hwbench(Some(database_path))
-		})
-	} else {
-		None
-	};
+) -> Result<TaskManager, ServiceError>
+where
+	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi, Executor>>,
+	RuntimeApi: Send + Sync + 'static,
+	RuntimeApi::RuntimeApi:
+		RuntimeApiCollection<StateBackend = StateBackendFor<FullBackend, Block>>,
+	Executor: NativeExecutionDispatch + 'static,
+{
 
-	let sc_service::PartialComponents {
+	let PartialComponents {
 		client,
 		backend,
 		mut task_manager,
@@ -392,11 +355,19 @@ pub fn new_full_base(
 		keystore_container,
 		select_chain,
 		transaction_pool,
-		other: (rpc_builder, import_setup, rpc_setup, mut telemetry),
-	} = new_partial(&config)?;
+		other: (_rpc_builder, import_setup, rpc_setup, mut telemetry, frontier_backend),
+	} = new_partial::<RuntimeApi, Executor>(&config, &eth_config)?;
+
+	let FrontierPartialComponents {
+		filter_pool,
+		fee_history_cache,
+		fee_history_cache_limit,
+	} = new_frontier_partial(&eth_config)?;
 
 	let shared_voter_state = rpc_setup;
+	
 	let auth_disc_publish_non_global_ips = config.network.allow_non_globals_in_dht;
+	
 	let grandpa_protocol_name = grandpa::protocol_standard_name(
 		&client.block_hash(0).ok().flatten().expect("Genesis block exists; qed"),
 		&config.chain_spec,
@@ -412,7 +383,7 @@ pub fn new_full_base(
 		Vec::default(),
 	));
 
-	let (network, system_rpc_tx, tx_handler_controller, network_starter) =
+	let (network, system_rpc_tx, tx_handler_controller, network_starter, sync_service) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
 			config: &config,
 			client: client.clone(),
@@ -420,7 +391,7 @@ pub fn new_full_base(
 			spawn_handle: task_manager.spawn_handle(),
 			import_queue,
 			block_announce_validator_builder: None,
-			warp_sync: Some(warp_sync),
+			warp_sync_params: Some(WarpSyncParams::WithProvider(warp_sync)),
 		})?;
 
 	if config.offchain_worker.enabled {
@@ -439,9 +410,53 @@ pub fn new_full_base(
 
 	let keystore_path = config.keystore.path().map(|p| p.to_owned());
 	
-	let rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
+	// for ethereum-compatibility rpc.
+	config.rpc_id_provider = Some(Box::new(fc_rpc::EthereumSubIdProvider));
+	let overrides = crate::rpc::overrides_handle(client.clone());
+	let eth_rpc_params = crate::rpc::EthDeps {
+		client: client.clone(),
+		pool: transaction_pool.clone(),
+		graph: transaction_pool.pool().clone(),
+		converter: Some(TransactionConverter),
+		is_authority: config.role.is_authority(),
+		enable_dev_signer: eth_config.enable_dev_signer,
+		network: network.clone(),
+		sync: sync_service.clone(),
+		frontier_backend: frontier_backend.clone(),
+		overrides: overrides.clone(),
+		block_data_cache: Arc::new(fc_rpc::EthBlockDataCacheTask::new(
+			task_manager.spawn_handle(),
+			overrides.clone(),
+			eth_config.eth_log_block_cache,
+			eth_config.eth_statuses_cache,
+			prometheus_registry.clone(),
+		)),
+		filter_pool: filter_pool.clone(),
+		max_past_logs: eth_config.max_past_logs,
+		fee_history_cache: fee_history_cache.clone(),
+		fee_history_cache_limit,
+		execute_gas_limit_multiplier: eth_config.execute_gas_limit_multiplier,
+	};
+
+	let rpc_builder = {
+		let client = client.clone();
+		let pool = transaction_pool.clone();
+
+		Box::new(move |deny_unsafe, subscription_task_executor| {
+			let deps = crate::rpc::FullDeps {
+				client: client.clone(),
+				pool: pool.clone(),
+				deny_unsafe,
+				eth: eth_rpc_params.clone(),
+			};
+
+			crate::rpc::create_full(deps, subscription_task_executor).map_err(Into::into)
+		})
+	};
+
+	let _rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
 		config,
-		backend,
+		backend: backend.clone(),
 		client: client.clone(),
 		keystore: keystore_container.sync_keystore(),
 		network: network.clone(),
@@ -450,21 +465,21 @@ pub fn new_full_base(
 		task_manager: &mut task_manager,
 		system_rpc_tx,
 		tx_handler_controller,
+		sync_service: sync_service.clone(),
 		telemetry: telemetry.as_mut(),
 	})?;
 
-	if let Some(hwbench) = hwbench {
-		sc_sysinfo::print_hwbench(&hwbench);
+	spawn_frontier_tasks(
+		&task_manager,
+		client.clone(),
+		backend,
+		frontier_backend,
+		filter_pool,
+		overrides,
+		fee_history_cache,
+		fee_history_cache_limit,
+	);
 
-		if let Some(ref mut telemetry) = telemetry {
-			let telemetry_handle = telemetry.handle();
-			task_manager.spawn_handle().spawn(
-				"telemetry_hwbench",
-				None,
-				sc_sysinfo::initialize_hwbench_telemetry(telemetry_handle, hwbench),
-			);
-		}
-	}
 
 	let (pow_block_import, grandpa_link) = import_setup;
 
@@ -487,8 +502,8 @@ pub fn new_full_base(
 			select_chain.clone(),
 			algorithm,
 			proposer,
-			network.clone(),
-			network.clone(),
+			sync_service.clone(),
+			sync_service.clone(),
 			Some(author.encode()),
 			CreateInherentDataProviders,
 			Duration::new(10, 0),
@@ -517,7 +532,7 @@ pub fn new_full_base(
 				let seal = compute.compute();
 				if hash_meets_difficulty(&seal.work, seal.difficulty) {
 					nonce = U256::from(0);
-					let mut worker = worker;
+					let worker = worker;
 						
 					let _ = futures::executor::block_on(worker.submit(seal.encode()));
 					
@@ -594,6 +609,7 @@ pub fn new_full_base(
 			config,
 			link: grandpa_link,
 			network: network.clone(),
+			sync: Arc::new(sync_service.clone()),
 			telemetry: telemetry.as_ref().map(|x| x.handle()),
 			voting_rule: grandpa::VotingRulesBuilder::default().build(),
 			prometheus_registry,
@@ -610,15 +626,42 @@ pub fn new_full_base(
 	}
 
 	network_starter.start_network();
-	Ok(NewFullBase { task_manager, client, network, transaction_pool, rpc_handlers })
+	Ok(task_manager)
 }
 
 /// Builds a new service for a full client.
 pub fn new_full(
 	config: Configuration,
+	eth_config: EthConfiguration,
 	author: Option<&str>,
-	disable_hardware_benchmarks: bool,
 ) -> Result<TaskManager, ServiceError> {
-	new_full_base(config, author, disable_hardware_benchmarks)
-		.map(|NewFullBase { task_manager, .. }| task_manager)
+	new_full_base::<impact_runtime::RuntimeApi, TemplateRuntimeExecutor>(config, eth_config, author)
+}
+
+pub fn new_chain_ops(
+	mut config: &mut Configuration,
+	eth_config: &EthConfiguration,
+) -> Result<
+	(
+		Arc<Client>,
+		Arc<FullBackend>,
+		BasicQueue<Block, PrefixedMemoryDB<BlakeTwo256>>,
+		TaskManager,
+		Arc<FrontierBackend>,
+	),
+	ServiceError,
+> {
+	config.keystore = sc_service::config::KeystoreConfig::InMemory;
+	let PartialComponents {
+		client,
+		backend,
+		import_queue,
+		task_manager,
+		other,
+		..
+	} = new_partial::<impact_runtime::RuntimeApi, TemplateRuntimeExecutor>(
+		config,
+		eth_config,
+	)?;
+	Ok((client, backend, import_queue, task_manager, other.4))
 }

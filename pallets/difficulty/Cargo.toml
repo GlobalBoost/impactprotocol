@@ -18,16 +18,16 @@ codec = { package = "parity-scale-codec", version = "3.0.0", default-features = 
 ] }
 log = "0.4.17"
 scale-info = { version = "2.1.1", default-features = false, features = ["derive"] }
-frame-benchmarking = { version = "4.0.0-dev", default-features = false, optional = true, git = "https://github.com/GlobalBoost/substrate.git"}
-frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+frame-benchmarking = { version = "4.0.0-dev", default-features = false, optional = true, git = "https://github.com/paritytech/substrate", branch = "master" }
+frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
 
-sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-sp-io = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-sp-std = { version = "5.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate" }
+sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-io = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-std = { version = "5.0.0", default-features = false, git = "https://github.com/paritytech/substrate" }
 
-pallet-timestamp = { git = "https://github.com/GlobalBoost/substrate", default-features = false }
+pallet-timestamp = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 
 impact-primitives = { path = "../../primitives", default-features = false }
 

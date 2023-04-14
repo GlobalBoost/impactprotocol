@@ -17,16 +17,16 @@ codec = { package = "parity-scale-codec", version = "3.0.0", default-features = 
 	"derive",
 ] }
 scale-info = { version = "2.1.1", default-features = false, features = ["derive"] }
-frame-benchmarking = { version = "4.0.0-dev", default-features = false, optional = true, git = "https://github.com/GlobalBoost/substrate.git"}
-frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
+frame-benchmarking = { version = "4.0.0-dev", default-features = false, optional = true, git = "https://github.com/paritytech/substrate", branch = "master" }
+frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
 
-sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-sp-io = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-sp-std = { version = "5.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate"}
-sp-consensus-pow = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate" }
+sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-io = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-std = { version = "5.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master"}
+sp-consensus-pow = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
 
 [features]
 default = ["std"]

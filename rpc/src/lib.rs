@@ -38,7 +38,7 @@ use std::sync::Arc;
 use jsonrpsee::RpcModule;
 use impact_primitives::{AccountId, Balance, Block, BlockNumber, Hash, Index};
 use sc_client_api::AuxStore;
-use sc_finality_grandpa::{
+use sc_consensus_grandpa::{
 	FinalityProofProvider, GrandpaJustificationStream, SharedAuthoritySet, SharedVoterState,
 };
 use sc_rpc::SubscriptionTaskExecutor;
@@ -108,7 +108,7 @@ where
 {
 	use mmr_rpc::{Mmr, MmrApiServer};
 	use pallet_transaction_payment_rpc::{TransactionPayment, TransactionPaymentApiServer};
-	use sc_finality_grandpa_rpc::{Grandpa, GrandpaApiServer};
+	use sc_consensus_grandpa_rpc::{Grandpa, GrandpaApiServer};
 	use sc_rpc::dev::{Dev, DevApiServer};
 	use sc_rpc_spec_v2::chain_spec::{ChainSpec, ChainSpecApiServer};
 	use substrate_frame_rpc_system::{System, SystemApiServer};

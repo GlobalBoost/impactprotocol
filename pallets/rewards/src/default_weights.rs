@@ -34,26 +34,26 @@ pub trait WeightInfo {
 pub struct SubstrateWeight<T>(PhantomData<T>);
 impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
     fn on_initialize() -> Weight {
-        Weight::from_ref_time(14_800_000 as u64)
+        Weight::from_parts(14_800_000 as u64, 0)
         .saturating_add(T::DbWeight::get().reads(2 as u64))
         .saturating_add(T::DbWeight::get().writes(2 as u64))
     }
     fn on_finalize() -> Weight {
-        Weight::from_ref_time(121_500_000 as u64)
+        Weight::from_parts(121_500_000 as u64, 0)
         .saturating_add(T::DbWeight::get().reads(5 as u64))
         .saturating_add(T::DbWeight::get().writes(3 as u64))
     }
     fn unlock() -> Weight {
-        Weight::from_ref_time(46_000_000 as u64)
+        Weight::from_parts(46_000_000 as u64, 0)
         .saturating_add(T::DbWeight::get().reads(1 as u64))
         .saturating_add(T::DbWeight::get().writes(1 as u64))
     }
     fn set_schedule() -> Weight {
-        Weight::from_ref_time(32_900_000 as u64)
+        Weight::from_parts(32_900_000 as u64, 0)
         .saturating_add(T::DbWeight::get().writes(4 as u64))
     }
     fn set_lock_params() -> Weight {
-        Weight::from_ref_time(0 as u64)
+        Weight::from_parts(0 as u64, 0)
         .saturating_add(T::DbWeight::get().writes(1 as u64))
     }
 
@@ -61,30 +61,30 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 
 impl crate::WeightInfo for () {
 	fn on_initialize() -> Weight {
-		(Weight::from_ref_time(14_800_000 as u64))
+		(Weight::from_parts(14_800_000 as u64, 0))
 			.saturating_add(DbWeight::get().reads(2 as u64))
 			.saturating_add(DbWeight::get().writes(2 as u64))
 	}
     
 	fn on_finalize() -> Weight {
-		(Weight::from_ref_time(121_500_000 as u64))
+		(Weight::from_parts(121_500_000 as u64, 0))
 			.saturating_add(DbWeight::get().reads(5 as u64))
 			.saturating_add(DbWeight::get().writes(3 as u64))
 	}
 
 	fn unlock() -> Weight {
-		(Weight::from_ref_time(46_000_000 as u64))
+		(Weight::from_parts(46_000_000 as u64, 0))
 			.saturating_add(DbWeight::get().reads(1 as u64))
 			.saturating_add(DbWeight::get().writes(1 as u64))
 	}
 
 	fn set_schedule() -> Weight {
-		(Weight::from_ref_time(32_900_000 as u64))
+		(Weight::from_parts(32_900_000 as u64, 0))
         .saturating_add(DbWeight::get().writes(4 as u64))
 	}
 
 	fn set_lock_params() -> Weight {
-		(Weight::from_ref_time(0 as u64))
+		(Weight::from_parts(0 as u64, 0))
         .saturating_add(DbWeight::get().writes(1 as u64))
 	}
 }

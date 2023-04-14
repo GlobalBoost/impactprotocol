@@ -16,26 +16,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-use super::benchmarking::{inherent_benchmark_data, RemarkBuilder, TransferKeepAliveBuilder};
 use crate::{
-	chain_spec, service,
-	service::{new_partial, FullClient},
-	Cli, Subcommand,
+	chain_spec,
+	cli::{Cli, Subcommand},
+	service::{self, db_config_dir},
 };
-use frame_benchmarking_cli::*;
-use impact_runtime::{ExistentialDeposit, RuntimeApi};
-use impact_executor::ExecutorDispatch;
+
+use sc_service::DatabaseSource;
+
+// Frontier
+use fc_db::frontier_database_dir;
+
+use impact_runtime::RuntimeApi;
 use impact_primitives::Block;
 use sc_cli::{ChainSpec, Result, RuntimeVersion, SubstrateCli};
 use sc_keystore::LocalKeystore;
-use sc_service::{config::KeystoreConfig, PartialComponents};
-use sp_keyring::Sr25519Keyring;
+use sc_service::config::KeystoreConfig;
 use sp_core::{
 	crypto::{Pair, Ss58AddressFormat, Ss58Codec},
 	hexdisplay::HexDisplay,
 };
 use sp_keystore::SyncCryptoStore;
-use std::sync::Arc;
 use log::*;
 
 impl SubstrateCli for Cli {
@@ -60,7 +61,7 @@ impl SubstrateCli for Cli {
 	}
 
 	fn copyright_start_year() -> i32 {
-		2022
+		2023
 	}
 
 	fn load_spec(&self, id: &str) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
@@ -93,16 +94,27 @@ pub fn run() -> Result<()> {
 		None => {
 			let runner = cli.create_runner(&cli.run)?;
 			runner.run_node_until_exit(|config| async move {
-				service::new_full(config, cli.author.as_ref().map(|s| s.as_str()), cli.no_hardware_benchmarks)
+				service::new_full(config,cli.eth, cli.author.as_ref().map(|s| s.as_str()))
 					.map_err(sc_cli::Error::Service)
 			})
 		},
+		
 		Some(Subcommand::Inspect(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 
-			runner.sync_run(|config| cmd.run::<Block, RuntimeApi, ExecutorDispatch>(config))
+			runner.sync_run(|config| cmd.run::<Block, RuntimeApi, service::ExecutorDispatch>(config))
 		},
+		#[cfg(feature = "runtime-benchmarks")]
 		Some(Subcommand::Benchmark(cmd)) => {
+			use crate::benchmarking::{
+				inherent_benchmark_data, RemarkBuilder, TransferKeepAliveBuilder,
+			};
+			use frame_benchmarking_cli::{
+				BenchmarkCmd, ExtrinsicFactory, SUBSTRATE_REFERENCE_HARDWARE,
+			};
+
+			use impact_runtime::{Block, ExistentialDeposit};
+
 			let runner = cli.create_runner(cmd)?;
 
 			runner.sync_run(|config| {
@@ -118,11 +130,11 @@ pub fn run() -> Result<()> {
 							)
 						}
 
-						cmd.run::<Block, ExecutorDispatch>(config)
+						cmd.run::<Block, service::ExecutorDispatch>(config)
 					},
 					BenchmarkCmd::Block(cmd) => {
 						// ensure that we keep the task manager alive
-						let partial = new_partial(&config)?;
+						let partial = new_partial(&config, &cli.eth)?;
 						cmd.run(partial.client)
 					},
 					#[cfg(not(feature = "runtime-benchmarks"))]
@@ -141,7 +153,7 @@ pub fn run() -> Result<()> {
 					},
 					BenchmarkCmd::Overhead(cmd) => {
 						// ensure that we keep the task manager alive
-						let partial = new_partial(&config)?;
+						let partial = new_partial(&config, &cli.eth)?;
 						let ext_builder = RemarkBuilder::new(partial.client.clone());
 
 						cmd.run(
@@ -154,7 +166,7 @@ pub fn run() -> Result<()> {
 					},
 					BenchmarkCmd::Extrinsic(cmd) => {
 						// ensure that we keep the task manager alive
-						let partial = service::new_partial(&config)?;
+						let partial = service::new_partial(&config, &cli.eth)?;
 						// Register the *Remark* and *TKA* builders.
 						let ext_factory = ExtrinsicFactory(vec![
 							Box::new(RemarkBuilder::new(partial.client.clone())),
@@ -177,6 +189,14 @@ pub fn run() -> Result<()> {
 				}
 			})
 		},
+		Some(Subcommand::FrontierDb(cmd)) => {
+			let runner = cli.create_runner(cmd)?;
+			runner.sync_run(|mut config| {
+				let (client, _, _, _, frontier_backend) =
+					service::new_chain_ops(&mut config, &cli.eth)?;
+				cmd.run(client, frontier_backend)
+			})
+		}
 		Some(Subcommand::Key(cmd)) => cmd.run(&cli),
 		Some(Subcommand::Sign(cmd)) => cmd.run(),
 		Some(Subcommand::Verify(cmd)) => cmd.run(),
@@ -187,43 +207,64 @@ pub fn run() -> Result<()> {
 		},
 		Some(Subcommand::CheckBlock(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
-			runner.async_run(|config| {
-				let PartialComponents { client, task_manager, import_queue, .. } =
-					new_partial(&config)?;
+			runner.async_run(|mut config| {
+				let (client, _, import_queue, task_manager, _) =
+					service::new_chain_ops(&mut config, &cli.eth)?;
 				Ok((cmd.run(client, import_queue), task_manager))
 			})
 		},
 		Some(Subcommand::ExportBlocks(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
-			runner.async_run(|config| {
-				let PartialComponents { client, task_manager, .. } = new_partial(&config)?;
+			runner.async_run(|mut config| {
+				let (client, _, _, task_manager, _) =
+					service::new_chain_ops(&mut config, &cli.eth)?;
 				Ok((cmd.run(client, config.database), task_manager))
 			})
 		},
 		Some(Subcommand::ExportState(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
-			runner.async_run(|config| {
-				let PartialComponents { client, task_manager, .. } = new_partial(&config)?;
+			runner.async_run(|mut config| {
+				let (client, _, _, task_manager, _) =
+					service::new_chain_ops(&mut config, &cli.eth)?;
 				Ok((cmd.run(client, config.chain_spec), task_manager))
 			})
 		},
 		Some(Subcommand::ImportBlocks(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
-			runner.async_run(|config| {
-				let PartialComponents { client, task_manager, import_queue, .. } =
-					new_partial(&config)?;
+			runner.async_run(|mut config| {
+				let (client, _, import_queue, task_manager, _) =
+					service::new_chain_ops(&mut config, &cli.eth)?;
 				Ok((cmd.run(client, import_queue), task_manager))
 			})
 		},
 		Some(Subcommand::PurgeChain(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
-			runner.sync_run(|config| cmd.run(config.database))
+			runner.sync_run(|config| 
+				{
+					// Remove Frontier offchain db
+					let db_config_dir = db_config_dir(&config);
+					let frontier_database_config = match config.database {
+						DatabaseSource::RocksDb { .. } => DatabaseSource::RocksDb {
+							path: frontier_database_dir(&db_config_dir, "db"),
+							cache_size: 0,
+						},
+						DatabaseSource::ParityDb { .. } => DatabaseSource::ParityDb {
+							path: frontier_database_dir(&db_config_dir, "paritydb"),
+						},
+						_ => {
+							return Err(format!("Cannot purge `{:?}` database", config.database).into())
+						}
+					};				
+				cmd.run(frontier_database_config)?;
+				cmd.run(config.database)
+			})
 		},
 		Some(Subcommand::Revert(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
-			runner.async_run(|config| {
-				let PartialComponents { client, task_manager, backend, .. } = new_partial(&config)?;
-				let aux_revert = Box::new(|client: Arc<FullClient>, _, blocks| {
+			runner.async_run(|mut config| {
+				let (client, backend, _, task_manager, _) =
+					service::new_chain_ops(&mut config, &cli.eth)?;
+				let aux_revert = Box::new(move |client, _, blocks| {
 					grandpa::revert(client, blocks)?;
 					Ok(())
 				});

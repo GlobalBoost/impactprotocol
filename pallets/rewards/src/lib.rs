@@ -28,8 +28,9 @@ pub mod pallet {
 	use frame_support::pallet_prelude::*;
 	use frame_support::{
 			ensure,
-		traits::{Currency, Get, LockIdentifier, LockableCurrency, WithdrawReasons},
+		traits::{Currency, Get, LockIdentifier, LockableCurrency, WithdrawReasons, FindAuthor},
 		weights::Weight,
+		ConsensusEngineId,
 	};
 	use frame_system::pallet_prelude::*;
 	use sp_consensus_pow::POW_ENGINE_ID;
@@ -321,6 +322,26 @@ pub mod pallet {
 				Ok(().into())
 			}
 		}
+
+		impl<T: Config> FindAuthor<T::AccountId> for Pallet<T> {
+			fn find_author<'a, I>(_digests: I) -> Option<T::AccountId>
+			where
+				I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
+			{
+				let author = frame_system::Pallet::<T>::digest()
+				.logs
+				.iter()
+				.filter_map(|s| s.as_pre_runtime())
+				.filter_map(|(id, mut data)| if id == POW_ENGINE_ID {
+					T::AccountId::decode(&mut data).ok()
+				} else {
+					None
+				})
+				.next();
+
+				author
+			}
+		}	
 
 
 

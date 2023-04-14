@@ -7,7 +7,7 @@ edition = "2021"
 build = "build.rs"
 license = "Apache-2.0"
 homepage = "https://impactprotocol.network"
-repository = "https://github.com/GlobalBoost/substrate/"
+repository = "https://github.com/paritytech/substrate/"
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
@@ -25,93 +25,111 @@ smallvec = "1.10.0"
 log = { version = "0.4.17", default-features = false }
 
 # primitives
-sp-authority-discovery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-sp-block-builder = { git = "https://github.com/GlobalBoost/substrate.git", default-features = false, version = "4.0.0-dev" }
-sp-inherents = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
+sp-authority-discovery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-block-builder = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false, version = "4.0.0-dev" }
+sp-inherents = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
 impact-primitives = { version = "2.0.0", default-features = false, path = "../primitives" }
-sp-consensus-pow = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-sp-offchain = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-sp-std = { version = "5.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-sp-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-sp-staking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-sp-session = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-sp-transaction-pool = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-sp-version = { version = "5.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-sp-io = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
+sp-consensus-pow = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-offchain = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-core = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-std = { version = "5.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-runtime = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-staking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-session = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-transaction-pool = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-version = { version = "5.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-io = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
 
 # frame dependencies
-frame-executive = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-frame-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git", optional = true }
-frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-frame-system-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git", optional = true }
-frame-election-provider-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-frame-system-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-frame-try-runtime = { version = "0.10.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git", optional = true }
-pallet-alliance = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-assets = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-authority-discovery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-authorship = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-bags-list = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-bounties = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-child-bounties = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-collective = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-contracts = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-contracts-primitives = { version = "7.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-conviction-voting = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-democracy = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-election-provider-multi-phase = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-election-provider-support-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git", optional = true }
-pallet-elections-phragmen = { version = "5.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-fast-unstake = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-grandpa = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-indices = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-identity = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-lottery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-membership = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-mmr = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-multisig = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-nfts = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-nomination-pools = { version = "1.0.0", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-nomination-pools-benchmarking = { version = "1.0.0", default-features = false, optional = true, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-nomination-pools-runtime-api = { version = "1.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-offences = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-offences-benchmarking = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git", default-features = false, optional = true }
-pallet-preimage = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-proxy = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-insecure-randomness-collective-flip = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-ranked-collective = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-recovery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-referenda = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-remark = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-session = { version = "4.0.0-dev", features = [ "historical" ], git = "https://github.com/GlobalBoost/substrate.git", default-features = false }
-pallet-session-benchmarking = { version = "4.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git", default-features = false, optional = true }
-pallet-staking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-staking-reward-curve = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-state-trie-migration = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-scheduler = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-society = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-sudo = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-tips = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-treasury = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-utility = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-transaction-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-transaction-payment-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-asset-tx-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
-pallet-transaction-storage = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-uniques = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-vesting = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git" }
-pallet-whitelist = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/substrate.git"}
+frame-executive = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+frame-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master", optional = true }
+frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+frame-system-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master", optional = true }
+frame-election-provider-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+frame-system-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+frame-try-runtime = { version = "0.10.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master", optional = true }
+pallet-alliance = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-assets = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-authority-discovery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-authorship = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-bags-list = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-bounties = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-child-bounties = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-collective = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-contracts = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-contracts-primitives = { version = "7.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-conviction-voting = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-democracy = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-election-provider-multi-phase = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-election-provider-support-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master", optional = true }
+pallet-elections-phragmen = { version = "5.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-fast-unstake = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-grandpa = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-im-online = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-indices = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-identity = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-lottery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-membership = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-mmr = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-multisig = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-nfts = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-nomination-pools = { version = "1.0.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-nomination-pools-benchmarking = { version = "1.0.0", default-features = false, optional = true, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-nomination-pools-runtime-api = { version = "1.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-offences = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-offences-benchmarking = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate", branch = "master", default-features = false, optional = true }
+pallet-preimage = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-proxy = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-insecure-randomness-collective-flip = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-ranked-collective = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-recovery = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-referenda = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-remark = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-session = { version = "4.0.0-dev", features = [ "historical" ], git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
+pallet-session-benchmarking = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate", branch = "master", default-features = false, optional = true }
+pallet-staking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-staking-reward-curve = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-state-trie-migration = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-scheduler = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-society = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-sudo = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-tips = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-treasury = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-utility = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-transaction-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-transaction-payment-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-asset-tx-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-transaction-storage = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-uniques = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-vesting = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-whitelist = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
 
 rewards = { package = "pallet-rewards", version = "4.0.0-dev", default-features = false, path = "../pallets/rewards" }
 difficulty = { package = "pallet-difficulty", version = "4.0.0-dev", default-features = false, path = "../pallets/difficulty" }
+account = { path = "../primitives/account", default-features = false }
+
+# Frontier Primitive
+fp-evm = { version = "3.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+fp-rpc = { version = "3.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+fp-self-contained = { version = "1.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+
+# Frontier FRAME
+pallet-base-fee = { version = "1.0.0", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+pallet-dynamic-fee = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+pallet-ethereum = { version = "4.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+pallet-evm = { version = "6.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+pallet-evm-chain-id = { version = "1.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+pallet-evm-precompile-modexp = { version = "2.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+pallet-evm-precompile-sha3fips = { version = "2.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+pallet-evm-precompile-simple = { version = "2.0.0-dev", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
+pallet-hotfix-sufficients = { version = "1.0.0", default-features = false, git = "https://github.com/GlobalBoost/frontier.git" }
 
 [build-dependencies]
-substrate-wasm-builder = { version = "5.0.0-dev", git = "https://github.com/GlobalBoost/substrate.git"}
+substrate-wasm-builder = { version = "5.0.0-dev", git = "https://github.com/paritytech/substrate", branch = "master" }
 
 [features]
 default = ["std"]
@@ -142,6 +160,7 @@ std = [
 	"pallet-fast-unstake/std",
 	"frame-executive/std",
 	"pallet-grandpa/std",
+	"pallet-im-online/std",
 	"pallet-indices/std",
 	"sp-inherents/std",
 	"pallet-lottery/std",
@@ -199,6 +218,20 @@ std = [
 	"pallet-alliance/std",
 	"rewards/std",
 	"difficulty/std",
+		# Frontier
+	"fp-evm/std",
+	"fp-rpc/std",
+	"fp-self-contained/std",
+	# Frontier FRAME
+	"pallet-base-fee/std",
+	"pallet-dynamic-fee/std",
+	"pallet-ethereum/std",
+	"pallet-evm/std",
+	"pallet-evm-chain-id/std",
+	"pallet-evm-precompile-modexp/std",
+	"pallet-evm-precompile-sha3fips/std",
+	"pallet-evm-precompile-simple/std",
+	"pallet-hotfix-sufficients/std",
 ]
 runtime-benchmarks = [
 	"frame-benchmarking/runtime-benchmarks",
@@ -220,6 +253,7 @@ runtime-benchmarks = [
 	"pallet-elections-phragmen/runtime-benchmarks",
 	"pallet-fast-unstake/runtime-benchmarks",
 	"pallet-grandpa/runtime-benchmarks",
+	"pallet-im-online/runtime-benchmarks",
 	"pallet-identity/runtime-benchmarks",
 	"pallet-indices/runtime-benchmarks",
 	"pallet-lottery/runtime-benchmarks",
@@ -270,6 +304,7 @@ try-runtime = [
 	"pallet-elections-phragmen/try-runtime",
 	"pallet-fast-unstake/try-runtime",
 	"pallet-grandpa/try-runtime",
+	"pallet-im-online/try-runtime",
 	"pallet-indices/try-runtime",
 	"pallet-identity/try-runtime",
 	"pallet-lottery/try-runtime",
