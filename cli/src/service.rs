@@ -155,6 +155,15 @@ impl sp_inherents::CreateInherentDataProviders<Block, ()> for CreateInherentData
 	}
 }
 
+type POWBlockImport<RuntimeApi, Executor> =  sc_consensus_pow::PowBlockImport<
+	Block,
+	FullGrandpaBlockImport<FullClient<RuntimeApi, Executor>>,
+	FullClient<RuntimeApi, Executor>,
+	FullSelectChain,
+	impact_consensus_pow::YescryptAlgorithm<FullClient<RuntimeApi, Executor>>,
+	CreateInherentDataProviders,
+>;
+
 /// Creates a new partial node.
 pub fn new_partial<RuntimeApi, Executor>(
 	config: &Configuration,
@@ -172,14 +181,12 @@ pub fn new_partial<RuntimeApi, Executor>(
 				sc_rpc::SubscriptionTaskExecutor,
 			) -> Result<jsonrpsee::RpcModule<()>, sc_service::Error>,
 			(
-				sc_consensus_pow::PowBlockImport<
+				FrontierBlockImport<
 				Block,
-				FullGrandpaBlockImport<FullClient<RuntimeApi, Executor>>,
+				POWBlockImport<RuntimeApi, Executor>,
 				FullClient<RuntimeApi, Executor>,
-				FullSelectChain,
-				impact_consensus_pow::YescryptAlgorithm<FullClient<RuntimeApi, Executor>>,
-				CreateInherentDataProviders,
 				>,
+				POWBlockImport<RuntimeApi, Executor>,
 				grandpa::LinkHalf<Block, FullClient<RuntimeApi, Executor>, FullSelectChain>,
 			),
 			SharedVoterState,
@@ -244,12 +251,6 @@ where
 		&db_config_dir(config),
 	)?);
 
-	let frontier_block_import = FrontierBlockImport::new(
-		grandpa_block_import.clone(),
-		client.clone(),
-		frontier_backend.clone(),
-	);
-
 	let algorithm = impact_consensus_pow::YescryptAlgorithm::new(client.clone());
 
 	let pow_block_import = sc_consensus_pow::PowBlockImport::new(
@@ -261,8 +262,14 @@ where
 		CreateInherentDataProviders,
 	);
 
+	let frontier_block_import = FrontierBlockImport::new(
+		pow_block_import.clone(),
+		client.clone(),
+		frontier_backend.clone(),
+	);
+
 	let import_queue = sc_consensus_pow::import_queue(
-		Box::new(frontier_block_import.clone()),
+		Box::new(pow_block_import.clone()),
 		Some(Box::new(grandpa_block_import)),
 		algorithm.clone(),
 		&task_manager.spawn_essential_handle(),
@@ -277,10 +284,10 @@ where
 		client.clone(),
 	);
 
-	let import_setup = (pow_block_import, grandpa_link);
+	let import_setup = (frontier_block_import, pow_block_import, grandpa_link);
 
 	let (rpc_extensions_builder, rpc_setup) = {
-		let (_, grandpa_link) = &import_setup;
+		let (_, _, grandpa_link) = &import_setup;
 
 		let justification_stream = grandpa_link.justification_stream();
 		let shared_authority_set = grandpa_link.shared_authority_set().clone();
@@ -379,7 +386,7 @@ where
 		.push(grandpa::grandpa_peers_set_config(grandpa_protocol_name.clone()));
 	let warp_sync = Arc::new(grandpa::warp_proof::NetworkProvider::new(
 		backend.clone(),
-		import_setup.1.shared_authority_set().clone(),
+		import_setup.2.shared_authority_set().clone(),
 		Vec::default(),
 	));
 
@@ -481,7 +488,7 @@ where
 	);
 
 
-	let (pow_block_import, grandpa_link) = import_setup;
+	let (_, pow_block_import, grandpa_link) = import_setup;
 
 	if let sc_service::config::Role::Authority { .. } = &role {
 		
@@ -531,12 +538,8 @@ where
 				};
 				let seal = compute.compute();
 				if hash_meets_difficulty(&seal.work, seal.difficulty) {
-					nonce = U256::from(0);
-					let worker = worker;
-						
-					let _ = futures::executor::block_on(worker.submit(seal.encode()));
-					
-					
+					nonce = U256::from(0);						
+					let _ = futures::executor::block_on(worker.submit(seal.encode()));					
 				} else {
 					nonce = nonce.saturating_add(U256::from(1));
 					if nonce == U256::MAX {
