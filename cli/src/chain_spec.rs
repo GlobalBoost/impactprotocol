@@ -31,6 +31,7 @@ use sc_chain_spec::ChainSpecExtension;
 use sc_service::ChainType;
 use sc_telemetry::TelemetryEndpoints;
 use serde::{Deserialize, Serialize};
+use sp_authority_discovery::AuthorityId as AuthorityDiscoveryId;
 use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public, H160, U256};
 use sp_runtime::{
 	traits::{IdentifyAccount, Verify},
@@ -70,8 +71,9 @@ pub fn impact_testnet_config() -> Result<ChainSpec, String> {
 
 fn session_keys(
 	grandpa: GrandpaId,
+	authority_discovery: AuthorityDiscoveryId,
 ) -> SessionKeys {
-	SessionKeys { grandpa }
+	SessionKeys { grandpa, authority_discovery }
 }
 
 fn staging_testnet_config_genesis() -> GenesisConfig {
@@ -88,6 +90,7 @@ fn staging_testnet_config_genesis() -> GenesisConfig {
 		AccountId,
 		AccountId,
 		GrandpaId,
+		AuthorityDiscoveryId,
 	)> = vec![
 		(
 			// 5FNCTJVDxfFnmUYKHqbJHjUi7UFbZ6pzC39sL6E5RVpB4vc9
@@ -96,6 +99,8 @@ fn staging_testnet_config_genesis() -> GenesisConfig {
 			array_bytes::hex_n_into_unchecked("cc4c78c7f22298f17e0e2dcefb7cff85b30e19dc1699cb9d1de00e5ea65a433d"),
 			// 5Fm7Lc3XDxxbH4LBKxn1tf44P1R5M5cm2vmuLZbUnPFLfu5p
 			array_bytes::hex2array_unchecked("a3859016b0b17b7ed6a5b2efcb4ce0e2b6b56ec8594d416c0ea3685929f0a15c").unchecked_into(),
+			// 5Eeard4qtNM8DBvqDEKn5GBAspbT7QEvhAjxSsYePB26XAiJ
+			array_bytes::hex2array_unchecked("724f3e6ec8a61ea3dc5b76c00a049f84fd7f212443b01241e0a2bb4ce503b345").unchecked_into(),			
 			),
 			(
 			// 5DP3mCevjzqrYhJgPpQFkpoERKg55K422u5KiRGPQaoJEgRH
@@ -104,6 +109,8 @@ fn staging_testnet_config_genesis() -> GenesisConfig {
 			array_bytes::hex_n_into_unchecked("f6eb0cff5244d7437ed659ac34e6ea66daa857f3d1c580f452b8512ae7fdba0f"),
 			// 5FKFid7kAaVFkfbpShH8dzw3wJipiuGPruTzc6WB2WKMviUX
 			array_bytes::hex2array_unchecked("8fcd640390db86812092a0b2b244aac9d8375be2c0a3434eb9062b58643c60fb").unchecked_into(),
+			// 5DhZENrJzzaJL2MwLsQsvxARhhAPCVXdHxs2oSJuJLxhUsbg
+			array_bytes::hex2array_unchecked("485746d4cc0f20b5581f24b30f91b34d49a7b96b85bb8ba202f354aea8e14b1f").unchecked_into(),			
 			),
 			(
 			// 5DJQ1NXeThmu2N5yQHZUsY64Lmgm95nnchpRWi1nSBU2rgod
@@ -112,6 +119,8 @@ fn staging_testnet_config_genesis() -> GenesisConfig {
 			array_bytes::hex_n_into_unchecked("6c1386fd76e4eec0365a439db0decae0d5d715e33db934bc44be28f73df50674"),
 			// 5EUsrdaXAAJ87Y7yCRdrYKeyHdTYbSr9tJFCYEy12CNap2v2
 			array_bytes::hex2array_unchecked("6ae80477725a1e4f3194fac59286662ea491c9461cb54909432228351be3474a").unchecked_into(),
+			// 5CLfsFaNYPGQvpYkroN1qrWLt54Xpmn6shAxdE45bCy1cvgv
+			array_bytes::hex2array_unchecked("0c2d3a4c604c4ad68e285cc1c401dd2665c1cd7193b16d4d9c854c27a9238a1a").unchecked_into(),
 			),
 			(
 			// 5EtMni1z8bHkrFboqro7R7PvfDcPqkpnS8tbW14SaR38rt4c
@@ -120,6 +129,8 @@ fn staging_testnet_config_genesis() -> GenesisConfig {
 			array_bytes::hex_n_into_unchecked("2aecc8f8047ab4ef7393113fb1421d935f6649a95eeed9a1adbf719528fd0f11"),
 			// 5CFk6YgnQGqQYL3bjUwMegmWq6JjambP5U5kc1pCTCcJGoWG
 			array_bytes::hex2array_unchecked("086b3ccfb1eb8e1af18db604665be263ffe74c0853b9014ac5c4b572d6edf294").unchecked_into(),
+			// 5HgfLj5eN6s4ipJMoDYzRV5b4DkZMKimP3Wa3H1DHqeGK5wh
+			array_bytes::hex2array_unchecked("f899880823b45669c5b7215fc0fa1f0a348113cfbfe450c41018a6699c76a23a").unchecked_into(),
 			),
 	];
 
@@ -172,11 +183,12 @@ where
 /// Helper function to generate stash, controller and session key from seed
 pub fn authority_keys_from_seed(
 	seed: &str,
-) -> (AccountId, AccountId, GrandpaId) {
+) -> (AccountId, AccountId, GrandpaId, AuthorityDiscoveryId) {
 	(
 		get_account_id_from_seed::<sr25519::Public>(&format!("{}//stash", seed)),
 		get_account_id_from_seed::<sr25519::Public>(seed),
 		get_from_seed::<GrandpaId>(seed),
+		get_from_seed::<AuthorityDiscoveryId>(seed),
 	)
 }
 
@@ -187,6 +199,7 @@ pub fn testnet_genesis(
 		AccountId,
 		AccountId,
 		GrandpaId,
+		AuthorityDiscoveryId,
 	)>,
 	initial_nominators: Vec<AccountId>,
 	root_key: AccountId,
@@ -257,7 +270,7 @@ pub fn testnet_genesis(
 					(
 						x.0.clone(),
 						x.0.clone(),
-						session_keys(x.2.clone()),
+						session_keys(x.2.clone(), x.3.clone()),
 					)
 				})
 				.collect::<Vec<_>>(),

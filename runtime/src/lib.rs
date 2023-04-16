@@ -574,6 +574,7 @@ pub mod opaque {
 	impl_opaque_keys! {
 		pub struct SessionKeys {
 			pub grandpa: Grandpa,
+			pub authority_discovery: AuthorityDiscovery,
 		}
 	}
 }
